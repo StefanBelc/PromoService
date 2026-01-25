@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: PromoService
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    consumer:
+      group-id: promo-service
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        schema:
+          registry:
+            url: http://localhost:8081
+
+myapp:
+  kafka:
+    game-events:
+      topic: "game.events"
+      concurrency: 3
+    tournament-events:
+      topic: "tournament.events"
+      concurrency: 3
