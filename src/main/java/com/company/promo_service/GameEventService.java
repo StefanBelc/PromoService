@@ -7,12 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
 @Service
-public class GameEventHandler {
+@RequiredArgsConstructor
+public class GameEventService {
 
     private final ScoreService scoreService;
-    private static final Logger logger = LoggerFactory.getLogger(GameEventHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(GameEventService.class);
 
 
     public void handleEvent(GameEvent event) {
