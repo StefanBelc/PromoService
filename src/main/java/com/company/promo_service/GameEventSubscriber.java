@@ -10,11 +10,11 @@ import org.springframework.kafka.annotation.KafkaListener;
 public class GameEventSubscriber {
 
     private static final Logger logger = LoggerFactory.getLogger(GameEventSubscriber.class);
-    private final GameEventHandler gameEventHandler;
+    private final GameEventService gameEventService;
 
     @KafkaListener(topics = "${game-events.topic}", groupId = "promo-service", concurrency = "${game-events.concurrency}")
     public void onGameEvent(GameEvent event) {
         logger.info("Received game event {}{}", event.gameId(), event);
-        gameEventHandler.handleEvent(event);
+        gameEventService.handleEvent(event);
     }
 }
