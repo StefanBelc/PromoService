@@ -23,3 +23,6 @@ myapp:
     tournament-events:
       topic: "tournament.events"
       concurrency: 3
+    leaderboard-events:
+      topic: "leaderboard.events"
+      concurrency: 3
