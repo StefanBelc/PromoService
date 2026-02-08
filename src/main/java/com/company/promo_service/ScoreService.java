@@ -1,6 +1,5 @@
 package com.company.promo_service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,12 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @Component
-@Getter
 public class ScoreService {
 
 
     private final ConcurrentHashMap<ScoreKey, PlayerScore> playerScores;
-    private LeaderboardService leaderboardServiceRepository;
     private final static int WIN_SCORE = 3;
     private final static int DRAW_SCORE = 1;
     private final static int LOSS_SCORE = 0;
