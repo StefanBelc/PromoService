@@ -40,7 +40,7 @@ public class ScoreService {
     public List<PlayerScore> getTournamentScores(String tournamentId) {
         return playerScores.values()
                 .stream()
-                .filter(value -> value.TournamentId().equals(tournamentId))
+                .filter(value -> value.tournamentId().equals(tournamentId))
                 .toList();
     }
 }

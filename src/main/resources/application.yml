@@ -2,6 +2,12 @@ spring:
   application:
     name: PromoService
 
+  Redis:
+    host: spring.data.redis.host=redis
+    port: localhost:6379
+    version: redis:latest
+    password: myStrongPassword
+
   kafka:
     bootstrap-servers: localhost:9092
 
