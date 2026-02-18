@@ -49,10 +49,10 @@ public class RedisLeaderboardRepository implements LeaderboardRepository {
     @Override
     public List<LeaderboardEntry> getLeaderboard(String tournamentId) {
 
-        Set<ZSetOperations.TypedTuple<String>> fullRange = redisTemplate
+        Set<ZSetOperations.TypedTuple<String>> fullTupleSetRange = redisTemplate
                 .opsForZSet()
                 .reverseRangeWithScores(tournamentId, 0, -1);
-        return mapToLeaderboard(tournamentId, fullRange);
+        return mapToLeaderboard(tournamentId, fullTupleSetRange);
 
     }
 
@@ -60,10 +60,10 @@ public class RedisLeaderboardRepository implements LeaderboardRepository {
     public List<LeaderboardEntry> getTop(String tournamentId, int limit) {
 
 
-        Set<ZSetOperations.TypedTuple<String>> range = redisTemplate
+        Set<ZSetOperations.TypedTuple<String>> tupleSetRange = redisTemplate
                 .opsForZSet()
                 .reverseRangeWithScores(tournamentId, 0, limit - 1);
-        return mapToLeaderboard(tournamentId, range);
+        return mapToLeaderboard(tournamentId, tupleSetRange);
 
     }
 
