@@ -78,11 +78,11 @@ public class LeaderboardService {
         for (String currentTournamentId : tournamentIds) {
             List<PlayerScore> scores = scoreService.getTournamentScores(currentTournamentId);
             if (scores == null || scores.isEmpty()) {
-                logger.info("score list is empty or null");
+                logger.debug("score list is empty or null");
                 break;
             }
             int totalPlayers = tournamentEventService.getCurrentTournament(currentTournamentId).totalPlayers();
-            buildLeaderboard(currentTournamentId, scores, totalPlayers);
+            publishLeaderboardEvent(currentTournamentId, scores, totalPlayers);
             for (PlayerScore playerScore : scores) {
                 redisLeaderboardRepository.save(playerScore);
                 logger.info("{} scores saved successfully to redis leaderboard", playerScore.playerName());
@@ -101,7 +101,7 @@ public class LeaderboardService {
         }
     }
 
-    private void buildLeaderboard(String currentTournamentId, List<PlayerScore> scores, int totalPlayers) {
+    private void publishLeaderboardEvent(String currentTournamentId, List<PlayerScore> scores, int totalPlayers) {
 
         LeaderboardEvent leaderboardEvent = LeaderboardEvent
                 .builder()
