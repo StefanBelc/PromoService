@@ -23,33 +23,85 @@ public class LeaderboardService {
     private final RedisLeaderboardRepository redisLeaderboardRepository;
 
 
+    public LeaderboardDto getTop(String tournamentId, int limit) {
+        if (isInvalidTournamentId(tournamentId)) {
+            throw new TournamentNotFoundException("Tournament id does not exist as an active tournament");
+        }
+
+        List<LeaderboardEntry> topPlayersList = redisLeaderboardRepository.getTop(tournamentId, limit);
+
+        List<LeaderboardEntryDto> leaderboardEntryDtoList = topPlayersList
+                .stream()
+                .map(entry -> LeaderboardEntryDto
+                        .builder()
+                        .name(entry.playerName())
+                        .score(entry.score())
+                        .build())
+                .toList();
+
+        return new LeaderboardDto(leaderboardEntryDtoList);
+    }
+
+    public LeaderboardDto getLeaderboard(String tournamentId) {
+        if (isInvalidTournamentId(tournamentId)) {
+            throw new TournamentNotFoundException("Tournament id does not exist as an active tournament");
+        }
+
+        List<LeaderboardEntry> leaderboardList = redisLeaderboardRepository.getLeaderboard(tournamentId);
+
+        List<LeaderboardEntryDto> leaderboardEntryDtoList = leaderboardList
+                .stream()
+                .map(entry -> LeaderboardEntryDto
+                        .builder()
+                        .name(entry.playerName())
+                        .score(entry.score())
+                        .build())
+                .toList();
+
+        return new LeaderboardDto(leaderboardEntryDtoList);
+    }
+
+    private boolean isInvalidTournamentId(String tournamentId) {
+        for (String activeTournamentId : getActiveTournamentIds()) {
+            if (tournamentId.equals(activeTournamentId)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Scheduled(fixedRate = 10000)
     public void updateLeaderboard() {
 
-        if (this.tournamentEventService.getActiveTournamentIds().isEmpty()) {
-            logger.debug("There is no active tournament on the list: {}", tournamentEventService.getActiveTournamentIds());
-        } else {
-            List<String> tournamentIds = tournamentEventService.getActiveTournamentIds()
-                    .stream()
-                    .toList();
+        List<String> tournamentIds = getActiveTournamentIds();
 
-            for (String currentTournamentId : tournamentIds) {
-                List<PlayerScore> scores = scoreService.getTournamentScores(currentTournamentId);
-                if (scores == null || scores.isEmpty()) {
-                    logger.info("score list is empty or null");
-                    break;
-                }
-                int totalPlayers = tournamentEventService.getCurrentTournament(currentTournamentId).totalPlayers();
-                buildLeaderboard(currentTournamentId, scores, totalPlayers);
-                for (PlayerScore playerScore : scores) {
-                    redisLeaderboardRepository.save(playerScore);
-                    logger.info("{} scores saved successfully to redis leaderboard", playerScore.playerName());
-                }
+        for (String currentTournamentId : tournamentIds) {
+            List<PlayerScore> scores = scoreService.getTournamentScores(currentTournamentId);
+            if (scores == null || scores.isEmpty()) {
+                logger.debug("score list is empty or null");
+                break;
+            }
+            int totalPlayers = tournamentEventService.getCurrentTournament(currentTournamentId).totalPlayers();
+            publishLeaderboardEvent(currentTournamentId, scores, totalPlayers);
+            for (PlayerScore playerScore : scores) {
+                redisLeaderboardRepository.save(playerScore);
+                logger.info("{} scores saved successfully to redis leaderboard", playerScore.playerName());
             }
         }
     }
 
-    private void buildLeaderboard(String currentTournamentId, List<PlayerScore> scores, int totalPlayers) {
+    private List<String> getActiveTournamentIds() {
+        if (this.tournamentEventService.getActiveTournamentIds().isEmpty()) {
+            logger.debug("There is no active tournament on the list: {}", tournamentEventService.getActiveTournamentIds());
+            return List.of();
+        } else {
+            return tournamentEventService.getActiveTournamentIds()
+                    .stream()
+                    .toList();
+        }
+    }
+
+    private void publishLeaderboardEvent(String currentTournamentId, List<PlayerScore> scores, int totalPlayers) {
 
         LeaderboardEvent leaderboardEvent = LeaderboardEvent
                 .builder()
@@ -102,6 +154,4 @@ public class LeaderboardService {
             return topThreePlayers;
         }
     }
-
-
 }

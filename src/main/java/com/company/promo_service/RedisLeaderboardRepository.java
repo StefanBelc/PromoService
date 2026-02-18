@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 public class RedisLeaderboardRepository implements LeaderboardRepository {
@@ -49,10 +49,10 @@ public class RedisLeaderboardRepository implements LeaderboardRepository {
     @Override
     public List<LeaderboardEntry> getLeaderboard(String tournamentId) {
 
-        Set<ZSetOperations.TypedTuple<String>> fullRange = redisTemplate
+        Set<ZSetOperations.TypedTuple<String>> redisReversedPlayerScoreSet = redisTemplate
                 .opsForZSet()
                 .reverseRangeWithScores(tournamentId, 0, -1);
-        return mapToLeaderboard(tournamentId, fullRange);
+        return mapToLeaderboard(tournamentId, redisReversedPlayerScoreSet);
 
     }
 
@@ -60,36 +60,37 @@ public class RedisLeaderboardRepository implements LeaderboardRepository {
     public List<LeaderboardEntry> getTop(String tournamentId, int limit) {
 
 
-        Set<ZSetOperations.TypedTuple<String>> range = redisTemplate
+        Set<ZSetOperations.TypedTuple<String>> reversedRangeWithScores = redisTemplate
                 .opsForZSet()
                 .reverseRangeWithScores(tournamentId, 0, limit - 1);
-        return mapToLeaderboard(tournamentId, range);
+        return mapToLeaderboard(tournamentId, reversedRangeWithScores);
 
     }
 
 
-    private List<LeaderboardEntry> mapToLeaderboard(String tournamentId, Set<ZSetOperations.TypedTuple<String>> tupleSet) {
-        if (tupleSet == null || tupleSet.isEmpty()) {
+    private List<LeaderboardEntry> mapToLeaderboard(String tournamentId, Set<ZSetOperations.TypedTuple<String>> playerScoreSet) {
+        if (playerScoreSet == null || playerScoreSet.isEmpty()) {
             return List.of();
         }
 
-        List<ZSetOperations.TypedTuple<String>> tupleList = tupleSet
+        List<ZSetOperations.TypedTuple<String>> playerScoresList = playerScoreSet
                 .stream()
                 .toList();
 
 
-        return IntStream.range(0, tupleList.size())
-                .mapToObj(rank -> {
-                    ZSetOperations.TypedTuple<String> entry = tupleList.get(rank);
-                    return LeaderboardEntry
-                            .builder()
-                            .tournamentId(tournamentId)
-                            .playerName(entry.getValue())
-                            .score(entry.getScore().intValue())
-                            .rank(rank + 1)
-                            .build();
-                })
-                .toList();
+        List<LeaderboardEntry> entries = new ArrayList<>();
+        int rank = 1;
+
+        for (ZSetOperations.TypedTuple<String> entry : playerScoresList) {
+            entries.add(LeaderboardEntry.builder()
+                    .tournamentId(tournamentId)
+                    .playerName(entry.getValue())
+                    .score(entry.getScore().intValue())
+                    .rank(rank++)
+                    .build());
+        }
+
+        return entries;
 
     }
 
