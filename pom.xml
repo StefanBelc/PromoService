@@ -14,7 +14,7 @@
 
 	<groupId>com.company</groupId>
 	<artifactId>promo-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>PromoService</name>
 	<description>Kafka consumer service that listens to game events and processes them asynchronously for state updates and analytics.</description>
 
