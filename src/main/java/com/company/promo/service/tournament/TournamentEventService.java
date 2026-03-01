@@ -1,4 +1,4 @@
-package com.company.promo_service;
+package com.company.promo.service.tournament;
 
 import com.company.promobridge.TournamentEvent;
 import com.company.promobridge.TournamentStatus;

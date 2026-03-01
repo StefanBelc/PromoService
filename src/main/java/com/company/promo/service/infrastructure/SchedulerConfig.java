@@ -1,4 +1,4 @@
-package com.company.promo_service;
+package com.company.promo.service.infrastructure;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;

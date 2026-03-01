@@ -1,12 +1,10 @@
-package com.company.promo_service;
+package com.company.promo.service.player.score;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-@RequiredArgsConstructor
 @Component
 public class ScoreService {
 
@@ -15,6 +13,10 @@ public class ScoreService {
     private final static int WIN_SCORE = 3;
     private final static int DRAW_SCORE = 1;
     private final static int LOSS_SCORE = 0;
+
+    public ScoreService() {
+        this.playerScores = new ConcurrentHashMap<>();
+    }
 
 
     public void incrementWin(String playerName, String tournamentId) {

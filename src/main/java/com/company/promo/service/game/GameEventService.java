@@ -1,5 +1,6 @@
-package com.company.promo_service;
+package com.company.promo.service.game;
 
+import com.company.promo.service.player.score.ScoreService;
 import com.company.promobridge.GameEvent;
 import com.company.promobridge.GameStatus;
 import lombok.RequiredArgsConstructor;

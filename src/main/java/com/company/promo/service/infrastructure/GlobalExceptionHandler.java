@@ -1,5 +1,7 @@
-package com.company.promo_service;
+package com.company.promo.service.infrastructure;
 
+import com.company.promo.service.player.PlayerNotFoundException;
+import com.company.promo.service.tournament.TournamentNotFoundException;
 import jakarta.annotation.Nonnull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

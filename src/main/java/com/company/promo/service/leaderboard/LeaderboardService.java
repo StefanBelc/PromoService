@@ -1,5 +1,9 @@
-package com.company.promo_service;
+package com.company.promo.service.leaderboard;
 
+import com.company.promo.service.player.score.PlayerScore;
+import com.company.promo.service.player.score.ScoreService;
+import com.company.promo.service.tournament.TournamentEventService;
+import com.company.promo.service.tournament.TournamentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

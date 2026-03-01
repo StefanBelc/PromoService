@@ -1,5 +1,7 @@
-package com.company.promo_service;
+package com.company.promo.service.leaderboard;
 
+import com.company.promo.service.player.PlayerNotFoundException;
+import com.company.promo.service.player.score.PlayerScore;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

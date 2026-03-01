@@ -1,5 +1,10 @@
-package com.company.promo_service;
+package com.company.promo.service;
 
+import com.company.promo.service.leaderboard.LeaderboardController;
+import com.company.promo.service.leaderboard.LeaderboardDto;
+import com.company.promo.service.leaderboard.LeaderboardEntryDto;
+import com.company.promo.service.leaderboard.LeaderboardService;
+import com.company.promo.service.tournament.TournamentNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,6 @@
-package com.company.promo_service;
+package com.company.promo.service.leaderboard;
+
+import com.company.promo.service.player.score.PlayerScore;
 
 import java.util.List;
 
