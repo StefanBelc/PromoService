@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +16,7 @@ public class TournamentEventService {
 
 
     private static final Logger logger = LoggerFactory.getLogger(TournamentEventService.class);
-    private final Map<String, Tournament> activeTournaments;
+    private final ConcurrentHashMap<String, Tournament> activeTournaments;
 
 
     public void handleEvent(TournamentEvent event) {
