@@ -40,6 +40,7 @@ public class LeaderboardService {
                         .builder()
                         .name(entry.playerName())
                         .score(entry.score())
+                        .rank(entry.rank())
                         .build())
                 .toList();
 
@@ -59,6 +60,7 @@ public class LeaderboardService {
                         .builder()
                         .name(entry.playerName())
                         .score(entry.score())
+                        .rank(entry.rank())
                         .build())
                 .toList();
 
