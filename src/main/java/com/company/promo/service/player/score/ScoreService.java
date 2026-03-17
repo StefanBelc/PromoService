@@ -34,8 +34,9 @@ public class ScoreService {
 
     public void updatePlayerScore(String name, int score, String tournamentId) {
         ScoreKey scoreKey = new ScoreKey(name, tournamentId);
-        PlayerScore playerScore = this.playerScores.computeIfAbsent(scoreKey, key -> new PlayerScore(name, tournamentId, score));
-        this.playerScores.put(scoreKey, new PlayerScore(name, tournamentId, playerScore.score() + score));
+        this.playerScores.merge(scoreKey, new PlayerScore(name, tournamentId, score),
+                (existingValue, newValue) ->
+                        new PlayerScore(name, tournamentId, existingValue.score() + newValue.score()));
 
     }
 
