@@ -2,24 +2,31 @@ spring:
   application:
     name: PromoService
 
-  Redis:
-    host: spring.data.redis.host=redis
-    port: localhost:6379
+  redis:
+    host: redis
+    port: 6379
     version: redis:latest
     password: myStrongPassword
 
   kafka:
-    bootstrap-servers: localhost:9092
-
+    bootstrap-servers: kafka:9092
     consumer:
       group-id: promo-service
       auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring.json.trusted.packages: "*"
+      schema:
+        registry:
+          url: http://schema-registry :8081
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         schema:
           registry:
-            url: http://localhost:8081
+            url: http://schema-registry:8081
 
 myapp:
   kafka:
@@ -32,3 +39,11 @@ myapp:
     leaderboard-events:
       topic: "leaderboard.events"
       concurrency: 3
+
+
+promo:
+  service:
+    leaderboard:
+      update:
+        rate:
+          ms: 10000
