@@ -12,7 +12,7 @@ public class LeaderboardEventPublisher {
     private final KafkaTemplate<String, LeaderboardEvent> kafkaTemplate;
 
     @Value("${myapp.kafka.leaderboard-events.topic}")
-    private final String leaderboardEventTopic;
+    private String leaderboardEventTopic;
 
 
     public void publishLeaderboardUpdated(String eventId, LeaderboardEvent leaderboardEvent) {

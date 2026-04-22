@@ -7,12 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @RequiredArgsConstructor
+@Repository
 public class RedisLeaderboardRepository implements LeaderboardRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisLeaderboardRepository.class);

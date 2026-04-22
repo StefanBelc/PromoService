@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Repository
+@Service
 public class LeaderboardService {
 
     public static final Logger logger = LoggerFactory.getLogger(LeaderboardService.class);

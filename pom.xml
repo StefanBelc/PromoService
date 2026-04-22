@@ -11,6 +11,12 @@
 		<version>3.5.7</version>
 		<relativePath/>
 	</parent>
+	<repositories>
+		<repository>
+			<id>confluent</id>
+			<url>https://packages.confluent.io/maven/</url>
+		</repository>
+	</repositories>
 
 	<groupId>com.company</groupId>
 	<artifactId>promo-service</artifactId>
@@ -44,6 +50,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>io.confluent</groupId>
+			<artifactId>kafka-json-serializer</artifactId>
+			<version>7.5.0</version>
+		</dependency>
 
 
 		<dependency>
@@ -76,7 +87,7 @@
 		<dependency>
 			<groupId>com.company.promobridge</groupId>
 			<artifactId>promobridge-sdk</artifactId>
-			<version>2.0</version>
+			<version>4.5</version>
 		</dependency>
 
 
