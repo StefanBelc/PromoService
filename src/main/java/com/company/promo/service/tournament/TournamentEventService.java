@@ -2,7 +2,6 @@ package com.company.promo.service.tournament;
 
 import com.company.promobridge.TournamentEvent;
 import com.company.promobridge.TournamentStatus;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,12 +10,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-@RequiredArgsConstructor
 public class TournamentEventService {
 
 
     private static final Logger logger = LoggerFactory.getLogger(TournamentEventService.class);
-    private final ConcurrentHashMap<String, Tournament> activeTournaments;
+    private final ConcurrentHashMap<String, Tournament> activeTournaments = new ConcurrentHashMap<>();
 
 
     public void handleEvent(TournamentEvent event) {

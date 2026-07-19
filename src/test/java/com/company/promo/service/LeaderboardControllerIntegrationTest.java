@@ -17,7 +17,9 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.GenericContainer;
@@ -43,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         "spring.kafka.listener.auto-startup=false"})
 @Testcontainers
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LeaderboardControllerIntegrationTest {
 
 
@@ -57,6 +60,9 @@ public class LeaderboardControllerIntegrationTest {
 
     @MockitoBean
     private KafkaTemplate<String, LeaderboardEvent> kafkaTemplate;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Autowired
     GameEventProducer gameEventProducer;
@@ -114,7 +120,6 @@ public class LeaderboardControllerIntegrationTest {
                 usingRecursiveComparison()
                 .isEqualTo(expectedLeaderboard);
 
-        // TODO: PA-33 finish concurrent updates and empty list
 
     }
 
@@ -154,10 +159,10 @@ public class LeaderboardControllerIntegrationTest {
                 new LeaderboardEntryDto("Alex", 10, 2)
         ));
 
+
         scoreService.updatePlayerScore("Florin", 7, "tournament1");
         scoreService.updatePlayerScore("Mihai", 10, "tournament1");
         scoreService.updatePlayerScore("Alex", 10, "tournament1");
-
         handleTournamentEvent();
         Thread.sleep(2000);
         leaderboardService.updateLeaderboard();
@@ -216,6 +221,8 @@ public class LeaderboardControllerIntegrationTest {
         startLatch.countDown();
 
         boolean completed = finishLatch.await(10, TimeUnit.SECONDS);
+
+
         assertThat(completed).isTrue();
 
         int expectedScore = numberOfThreads * updatesPerThread;
@@ -232,6 +239,8 @@ public class LeaderboardControllerIntegrationTest {
         assertThat(actualLeaderboard.leaderboardEntryDtoList().get(0).score())
                 .as("final score should reflect all changes")
                 .isEqualTo(expectedScore);
+
+
     }
 
 }

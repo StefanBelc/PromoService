@@ -5,7 +5,7 @@ import com.company.promo.service.player.score.PlayerScore;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Repository;
 
@@ -18,12 +18,12 @@ import java.util.Set;
 public class RedisLeaderboardRepository implements LeaderboardRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisLeaderboardRepository.class);
-    private final RedisTemplate<String, String> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
     @Override
     public void save(PlayerScore player) {
         redisTemplate.opsForZSet().add(player.tournamentId(), player.playerName(), player.score());
-        logger.info("Player {}, saved successfully in Leaderboard", player.playerName());
+        logger.info("Player {}, saved successfully in REDIS Leaderboard", player.playerName());
     }
 
     @Override
@@ -74,6 +74,7 @@ public class RedisLeaderboardRepository implements LeaderboardRepository {
 
     private List<LeaderboardEntry> mapToLeaderboard(String tournamentId, Set<ZSetOperations.TypedTuple<String>> playerScoreSet) {
         if (playerScoreSet == null || playerScoreSet.isEmpty()) {
+            logger.warn("PlayerScore set is null or empty");
             return List.of();
         }
 

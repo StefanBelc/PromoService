@@ -1,12 +1,17 @@
+server:
+  port: 8084
+
 spring:
+  profiles:
+    active: sdk
   application:
     name: PromoService
 
-  redis:
-    host: redis
-    port: 6379
-    version: redis:latest
-    password: myStrongPassword
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:myStrongPassword}
 
   kafka:
     bootstrap-servers: kafka:9092
@@ -19,14 +24,18 @@ spring:
       spring.json.trusted.packages: "*"
       schema:
         registry:
-          url: http://schema-registry :8081
+          url: http://localhost:8081
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
+        spring.json.type.mapping: >-
+          leaderboard_event:com.company.promo.service.leaderboard.LeaderboardEvent,
+          game_event:com.company.promobridge.GameEvent,
+          tournament_event:com.company.promobridge.TournamentEvent
         schema:
           registry:
-            url: http://schema-registry:8081
+            url: http://localhost:8081
 
 myapp:
   kafka:

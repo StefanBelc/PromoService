@@ -78,20 +78,19 @@ public class LeaderboardService {
 
     @Scheduled(fixedRate = 10000)
     public void updateLeaderboard() {
-
         List<String> tournamentIds = getActiveTournamentIds();
 
         for (String currentTournamentId : tournamentIds) {
             List<PlayerScore> scores = scoreService.getTournamentScores(currentTournamentId);
             if (scores == null || scores.isEmpty()) {
                 logger.debug("score list is empty or null");
-                break;
+                continue;
             }
             int totalPlayers = tournamentEventService.getCurrentTournament(currentTournamentId).totalPlayers();
             publishLeaderboardEvent(currentTournamentId, scores, totalPlayers);
             for (PlayerScore playerScore : scores) {
+                logger.info("{} scores sent to redis leaderboard", playerScore.playerName());
                 redisLeaderboardRepository.save(playerScore);
-                logger.info("{} scores saved successfully to redis leaderboard", playerScore.playerName());
             }
         }
     }
@@ -145,6 +144,7 @@ public class LeaderboardService {
             List<PlayerScore> topThreePlayerScores = scores
                     .stream()
                     .sorted(Comparator.comparingInt(PlayerScore::score).reversed())
+                    .limit(3)
                     .toList();
 
             List<TopPlayer> topThreePlayers = new ArrayList<>();
