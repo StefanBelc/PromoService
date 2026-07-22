@@ -13,6 +13,21 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:myStrongPassword}
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/promo_db
+    username: conduktor
+    password: some_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
   kafka:
     bootstrap-servers: kafka:9092
     consumer:
@@ -30,7 +45,7 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.type.mapping: >-
-          leaderboard_event:com.company.promo.service.leaderboard.LeaderboardEvent,
+          leaderboard_event:com.company.promo.service.leaderboard.messaging.LeaderboardEvent,
           game_event:com.company.promobridge.GameEvent,
           tournament_event:com.company.promobridge.TournamentEvent
         schema:
