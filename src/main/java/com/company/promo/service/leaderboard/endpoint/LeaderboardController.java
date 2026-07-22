@@ -1,5 +1,6 @@
-package com.company.promo.service.leaderboard;
+package com.company.promo.service.leaderboard.endpoint;
 
+import com.company.promo.service.leaderboard.LeaderboardService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,11 @@
-package com.company.promo.service.leaderboard;
+package com.company.promo.service.persistence;
 
+import com.company.promo.service.leaderboard.endpoint.LeaderboardEntry;
 import com.company.promo.service.player.score.PlayerScore;
 
 import java.util.List;
 
-public interface LeaderboardRepository {
+public interface LeaderboardCacheRepository {
 
     void save(PlayerScore player);
 
