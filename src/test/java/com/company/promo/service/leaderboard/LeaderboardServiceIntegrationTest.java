@@ -1,5 +1,8 @@
 package com.company.promo.service.leaderboard;
 
+import com.company.promo.service.leaderboard.endpoint.LeaderboardEntryDto;
+import com.company.promo.service.leaderboard.messaging.LeaderboardEvent;
+import com.company.promo.service.leaderboard.messaging.LeaderboardEventPublisher;
 import com.company.promo.service.player.score.ScoreService;
 import com.company.promo.service.tournament.TournamentEventService;
 import com.company.promobridge.TournamentEvent;

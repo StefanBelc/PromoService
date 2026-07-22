@@ -1,5 +1,6 @@
-package com.company.promo.service.leaderboard;
+package com.company.promo.service.persistence;
 
+import com.company.promo.service.leaderboard.endpoint.LeaderboardEntry;
 import com.company.promo.service.player.PlayerNotFoundException;
 import com.company.promo.service.player.score.PlayerScore;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,9 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Repository
-public class RedisLeaderboardRepository implements LeaderboardRepository {
+public class RedisLeaderboardCacheRepository implements LeaderboardCacheRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(RedisLeaderboardRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(RedisLeaderboardCacheRepository.class);
     private final StringRedisTemplate redisTemplate;
 
     @Override
@@ -36,6 +37,11 @@ public class RedisLeaderboardRepository implements LeaderboardRepository {
     public void remove(PlayerScore player) {
         redisTemplate.opsForZSet().remove(player.tournamentId(), player.playerName());
         logger.info("Player {} removed successfully", player);
+    }
+
+    public void removeAll(String tournamentId) {
+        redisTemplate.opsForZSet().removeRange(tournamentId, 0, -1);
+        logger.info("All entries removed in Redis Leaderboard Cache");
     }
 
     @Override

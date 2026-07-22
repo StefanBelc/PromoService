@@ -1,6 +1,11 @@
 package com.company.promo.service;
 
-import com.company.promo.service.leaderboard.*;
+import com.company.promo.service.leaderboard.LeaderboardService;
+import com.company.promo.service.leaderboard.endpoint.LeaderboardDto;
+import com.company.promo.service.leaderboard.endpoint.LeaderboardEntryDto;
+import com.company.promo.service.leaderboard.messaging.LeaderboardEvent;
+import com.company.promo.service.leaderboard.messaging.LeaderboardEventPublisher;
+import com.company.promo.service.persistence.RedisLeaderboardCacheRepository;
 import com.company.promo.service.player.score.ScoreService;
 import com.company.promo.service.tournament.Tournament;
 import com.company.promo.service.tournament.TournamentEventService;
@@ -8,6 +13,7 @@ import com.company.promo.service.tournament.TournamentNotFoundException;
 import com.company.promobridge.*;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +25,6 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.GenericContainer;
@@ -45,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         "spring.kafka.listener.auto-startup=false"})
 @Testcontainers
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class LeaderboardControllerIntegrationTest {
 
 
@@ -72,7 +77,7 @@ public class LeaderboardControllerIntegrationTest {
     ScoreService scoreService;
 
     @Autowired
-    private RedisLeaderboardRepository redisLeaderboardRepository;
+    private RedisLeaderboardCacheRepository redisLeaderboardRepository;
 
     @Autowired
     private LeaderboardService leaderboardService;
@@ -85,6 +90,11 @@ public class LeaderboardControllerIntegrationTest {
     @BeforeEach
     void setup() {
         RestAssured.port = port;
+    }
+
+    @AfterEach
+    void tearDown() {
+        redisTemplate.getConnectionFactory().getConnection().commands().flushDb();
     }
 
 

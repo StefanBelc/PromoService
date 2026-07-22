@@ -1,4 +1,4 @@
-package com.company.promo.service.leaderboard;
+package com.company.promo.service.leaderboard.messaging;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

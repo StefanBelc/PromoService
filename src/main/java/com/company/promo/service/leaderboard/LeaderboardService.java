@@ -1,5 +1,12 @@
 package com.company.promo.service.leaderboard;
 
+import com.company.promo.service.leaderboard.endpoint.LeaderboardDto;
+import com.company.promo.service.leaderboard.endpoint.LeaderboardEntry;
+import com.company.promo.service.leaderboard.endpoint.LeaderboardEntryDto;
+import com.company.promo.service.leaderboard.messaging.LeaderboardEvent;
+import com.company.promo.service.leaderboard.messaging.LeaderboardEventPublisher;
+import com.company.promo.service.persistence.LeaderboardPersistenceService;
+import com.company.promo.service.persistence.RedisLeaderboardCacheRepository;
 import com.company.promo.service.player.score.PlayerScore;
 import com.company.promo.service.player.score.ScoreService;
 import com.company.promo.service.tournament.TournamentEventService;
@@ -24,7 +31,8 @@ public class LeaderboardService {
     private final TournamentEventService tournamentEventService;
     private final ScoreService scoreService;
     private final LeaderboardEventPublisher eventPublisher;
-    private final RedisLeaderboardRepository redisLeaderboardRepository;
+    private final RedisLeaderboardCacheRepository redisLeaderboardRepository;
+    private final LeaderboardPersistenceService leaderboardPersistenceService;
 
 
     public LeaderboardDto getTop(String tournamentId, int limit) {
@@ -76,6 +84,7 @@ public class LeaderboardService {
         return true;
     }
 
+
     @Scheduled(fixedRate = 10000)
     public void updateLeaderboard() {
         List<String> tournamentIds = getActiveTournamentIds();
@@ -87,11 +96,14 @@ public class LeaderboardService {
                 continue;
             }
             int totalPlayers = tournamentEventService.getCurrentTournament(currentTournamentId).totalPlayers();
-            publishLeaderboardEvent(currentTournamentId, scores, totalPlayers);
+            LeaderboardEvent currentLeaderboard = buildLeaderboard(currentTournamentId, scores, totalPlayers);
+
             for (PlayerScore playerScore : scores) {
                 logger.info("{} scores sent to redis leaderboard", playerScore.playerName());
                 redisLeaderboardRepository.save(playerScore);
             }
+            persistLeaderboard(currentLeaderboard);
+            publishLeaderboardEvent(currentLeaderboard);
         }
     }
 
@@ -106,9 +118,16 @@ public class LeaderboardService {
         }
     }
 
-    private void publishLeaderboardEvent(String currentTournamentId, List<PlayerScore> scores, int totalPlayers) {
+    private void publishLeaderboardEvent(LeaderboardEvent leaderboardEvent) {
 
-        LeaderboardEvent leaderboardEvent = LeaderboardEvent
+        eventPublisher.publishLeaderboardUpdated(leaderboardEvent.tournamentId(), leaderboardEvent);
+        logger.info("leaderboard {} with current tournament id {}" +
+                " has been successfully published", leaderboardEvent, leaderboardEvent.tournamentId());
+    }
+
+
+    private LeaderboardEvent buildLeaderboard(String currentTournamentId, List<PlayerScore> scores, int totalPlayers) {
+        return LeaderboardEvent
                 .builder()
                 .tournamentId(currentTournamentId)
                 .timestamp(Timestamp.from(Instant.now()))
@@ -116,11 +135,11 @@ public class LeaderboardService {
                 .averageScore(buildAverageScore(scores))
                 .topPlayers(buildTopThreeRanking(scores))
                 .build();
+    }
 
-        eventPublisher.publishLeaderboardUpdated(currentTournamentId, leaderboardEvent);
-        logger.info("leaderboard {} with current tournament id {}" +
-                " has been successfully published", leaderboardEvent, currentTournamentId);
 
+    private void persistLeaderboard(LeaderboardEvent leaderboardEvent) {
+        leaderboardPersistenceService.persistLeaderboardSnapshot(leaderboardEvent);
     }
 
 

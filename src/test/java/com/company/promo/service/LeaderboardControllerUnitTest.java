@@ -1,8 +1,8 @@
 package com.company.promo.service;
 
-import com.company.promo.service.leaderboard.LeaderboardController;
-import com.company.promo.service.leaderboard.LeaderboardDto;
-import com.company.promo.service.leaderboard.LeaderboardEntryDto;
+import com.company.promo.service.leaderboard.endpoint.LeaderboardController;
+import com.company.promo.service.leaderboard.endpoint.LeaderboardDto;
+import com.company.promo.service.leaderboard.endpoint.LeaderboardEntryDto;
 import com.company.promo.service.leaderboard.LeaderboardService;
 import com.company.promo.service.tournament.TournamentNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;

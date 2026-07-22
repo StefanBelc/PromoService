@@ -1,4 +1,4 @@
-package com.company.promo.service.leaderboard;
+package com.company.promo.service.leaderboard.endpoint;
 
 import lombok.Builder;
 
