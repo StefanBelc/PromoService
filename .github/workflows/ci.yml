@@ -19,12 +19,10 @@ jobs:
           cache: maven
 
       # This service depends on promobridge-sdk 4.5, which is not published to a Maven repository,
-      # so CI builds it from source and installs it into the runner's local repository.
-      # Uses the 4.5 tag when present, otherwise the "release version 4.5" commit.
+      # so CI builds it from its release tag and installs it into the runner's local repository.
       - name: Install promobridge-sdk 4.5
         run: |
-          git clone https://github.com/StefanBelc/promobridge-sdk.git "$RUNNER_TEMP/promobridge-sdk"
-          git -C "$RUNNER_TEMP/promobridge-sdk" checkout -q 4.5 || git -C "$RUNNER_TEMP/promobridge-sdk" checkout -q 73e623c
+          git clone --depth 1 --branch 4.5 https://github.com/StefanBelc/promobridge-sdk.git "$RUNNER_TEMP/promobridge-sdk"
           mvn -B -q -f "$RUNNER_TEMP/promobridge-sdk/pom.xml" install -DskipTests
 
       # Unit tests plus Testcontainers integration tests (Docker is available on GitHub runners)
