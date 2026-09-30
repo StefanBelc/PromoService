@@ -32,7 +32,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest()
+// The producer tags leaderboard events with the type id "leaderboard_event" (spring.json.type.mapping),
+// so the test consumer needs the same mapping to turn that id back into a class.
+@SpringBootTest(properties = "spring.kafka.consumer.properties.spring.json.type.mapping="
+        + "leaderboard_event:com.company.promo.service.leaderboard.messaging.LeaderboardEvent,"
+        + "game_event:com.company.promobridge.GameEvent,"
+        + "tournament_event:com.company.promobridge.TournamentEvent")
 @Testcontainers
 @Import(LeaderboardServiceIntegrationTest.TestKafkaConsumer.class)
 class LeaderboardServiceIntegrationTest {
